@@ -14,17 +14,19 @@ def index():
 
 @app.route('/results', methods=['POST'])
 def show():
-    result = request.form['title']
-    listvid = youtube_search(result)
+    form_query = request.form['title']
+    youtube_videos = youtube_search(form_query)
 
-    list_tweets = twitter_search(result)
+    youtube_videos_json = json.dumps(youtube_videos)
 
-    #result_json = json.dumps(listvid, sort_keys=True, indent=4)
-    #result = "zalupa"
+    youtube_videos_list = json.loads(youtube_videos_json)
+
+    list_tweets = twitter_search(form_query)
+
     print(list_tweets)
 
 
-    return render_template('results.html', res = listvid, tweets = list_tweets)
+    return render_template('results.html', yt_vid = youtube_videos_list, tweets = list_tweets)
     #return render_template('results.html', tweets=list_tweets)
 
 

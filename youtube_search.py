@@ -1,6 +1,7 @@
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from oauth2client.tools import argparser
+import json
 
 
 # Set DEVELOPER_KEY to the API key value from the APIs & auth > Registered apps
@@ -20,44 +21,37 @@ def youtube_search(options):
       q=options,
       part="id,snippet",
       #maxResults=options.max_results
-      maxResults=5
+      maxResults=10
     ).execute()
 
 #########-----------------------------------------------------
-    print (search_response)
     videos = []
-    #videos = {}
-    channels = []
-    playlists = []
-    links = []
+    temp_list = []
+    video_list = []
 
     # Add each result to the appropriate list, and then display the lists of
     # matching videos, channels, and playlists.
     for search_result in search_response.get("items", []):
+
       if search_result["id"]["kind"] == "youtube#video":
-        videos.append("Title: %s , link: https://www.youtube.com/watch?v=%s" % (search_result["snippet"]["title"],search_result["id"]["videoId"]))
+        #videos.append("Title: %s , link: https://www.youtube.com/watch?v=%s" % (search_result["snippet"]["title"],search_result["id"]["videoId"]))
+        #temp_list.append((search_result["snippet"]["title"], search_result["id"]["videoId"]))
+        temp_list.append(search_result["snippet"]["title"])
+        temp_list.append(search_result["id"]["videoId"])
 
-      #if search_result["id"]["kind"] == "youtube#video":
-        #videos['title'] = search_result["snippet"]["title"]
-        #videos['link'] = search_result["id"]["videoId"]
-        #videos.append("Title: %s , link: https://www.youtube.com/watch?v=%s" % (search_result["snippet"]["title"], search_result["id"]["videoId"]))
+        videos.append(temp_list)
 
-      #elif search_result["id"]["kind"] == "youtube#channel":
-        #channels.append("%s (%s)" % (search_result["snippet"]["title"],search_result["id"]["channelId"]))
-
-      #elif search_result["id"]["kind"] == "youtube#playlist":
-        #playlists.append("%s (%s)" % (search_result["snippet"]["title"],search_result["id"]["playlistId"]))
-    #print(videos)
-    #print (videos)
+        temp_list = []
 
 
-    #print ("Videos:\n", "\n".join(videos), "\n")
 
-    #return videos
-    print(search_response.__class__)
-    return search_response
-    #print ("Channels:\n", "\n".join(channels), "\n")
-    #print ("Playlists:\n", "\n".join(playlists), "\n")
+    for video in videos:
+        temp_video = { }
+        temp_video['title'] = video[0]
+        temp_video['link'] = video[1]
+        video_list.append(temp_video)
+
+    return video_list
 
 
 if __name__ == "__main__":
@@ -71,10 +65,6 @@ if __name__ == "__main__":
         #print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
         print ("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
 
-
-#que = "Common WHO Questions in English"
-#youtube_search(options={"mettalica"})
-#search_query = input('Enter keywords: - ')
 
 youtube_search("bon jovi")
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+</head>
+<body>
+
+<h1>Youtube results</h1>
+
+{% for video in yt_vid %}
+    <div class="video">
+        <h3> Title - {{ video['title'] }} </h3>
+        <h4> Link - {{ video['link'] }}</h4>
+        <hr>
+    </div>
+{% endfor %}
+
+
+<h1>Twitter results</h1>
+
+{% for tweet in tweets %}
+        <div class="tweet">
+            <h3>{{ tweet}}</h3>
+
+        </div>
+{% endfor %}
+
+<p>ololol</p>
+
+
+</body>
+</html>
+
