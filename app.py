@@ -23,10 +23,14 @@ def show():
 
     list_tweets = twitter_search(form_query)
 
-    print(list_tweets)
+    twitter_json = json.dumps(list_tweets)
+
+    twitter_list_template = json.loads(twitter_json)
+
+    #print(list_tweets)
 
 
-    return render_template('results.html', yt_vid = youtube_videos_list, tweets = list_tweets)
+    return render_template('results.html', yt_vid = youtube_videos_list, tweets = twitter_list_template)
     #return render_template('results.html', tweets=list_tweets)
 
 

@@ -1,4 +1,5 @@
 from TwitterSearch import *
+import json
 
 def twitter_search(query):
 
@@ -21,15 +22,30 @@ def twitter_search(query):
     )
 
     tweets = []
-
+    tweets_list = []
+    temp_list = []
 
     for tweet in ts.search_tweets_iterable(tso):
         #print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
 
-        tweets.append('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
+        #tweets.append('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
+
+        temp_list.append(tweet['user']['screen_name'])
+        temp_list.append(tweet['text'])
+
+        tweets.append(temp_list)
+
+        temp_list = []
 
     print(tweets)
-    return tweets
+    for tweet in tweets:
+        temp_tweet = { }
+        temp_tweet['tweeter_user'] = tweet[0]
+        temp_tweet['tweeter_text'] = tweet[1]
+        tweets_list.append(temp_tweet)
+
+
+    return tweets_list
 
 
 

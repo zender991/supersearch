@@ -20,10 +20,11 @@
 <h1>Twitter results</h1>
 
 {% for tweet in tweets %}
-        <div class="tweet">
-            <h3>{{ tweet}}</h3>
-
-        </div>
+    <div class="tweet">
+        <h3>User - {{ tweet['tweeter_user'] }}</h3>
+        <h4>Message - {{ tweet['tweeter_text'] }}</h4>
+        <hr>
+    </div>
 {% endfor %}
 
 <p>ololol</p>
