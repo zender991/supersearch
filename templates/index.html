@@ -5,6 +5,11 @@
     <title>Latest Posts</title>
 </head>
 <body>
+<div>
+      {% if g.user.is_authenticated()%}
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      {% endif %}
+</div>
     <h2>Latets posts</h2>
     <form method="post" action="/results">
             <label for="title">Title</label>

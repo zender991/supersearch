@@ -37,7 +37,7 @@ def twitter_search(query):
 
         temp_list = []
 
-    print(tweets)
+    #print(tweets)
     for tweet in tweets:
         temp_tweet = { }
         temp_tweet['tweeter_user'] = tweet[0]
@@ -49,5 +49,5 @@ def twitter_search(query):
 
 
 
-twitter_search("Justin Bieber")
+#twitter_search("Justin Bieber")
 

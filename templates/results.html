@@ -6,12 +6,18 @@
 </head>
 <body>
 
+<div>
+      {% if g.user.is_authenticated()%}
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      {% endif %}
+</div>
+
 <h1>Youtube results</h1>
 
 {% for video in yt_vid %}
     <div class="video">
         <h3> Title - {{ video['title'] }} </h3>
-        <h4> Link - {{ video['link'] }}</h4>
+        <h4> Link - https://www.youtube.com/watch?v={{ video['link'] }}</h4>
         <hr>
     </div>
 {% endfor %}
