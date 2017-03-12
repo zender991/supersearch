@@ -6,8 +6,6 @@ from twitter_search import twitter_search
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 
-
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testbd.sqlite'
 app.config['SECRET_KEY'] = 'zxczxasdsad'
@@ -16,42 +14,12 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 login_manager.login_view = 'login'
-
-
-
-
-class Bratuha(db.Model):
-    __tablename__ = 'bratuhas'
-
-    id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(50))
-    password = db.Column(db.String(50))
-
-    def __init__(self, login, password):
-        self.login = login
-        self.password = password
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        #return unicode(self.id)
-        return int(self.id)
-
-    def __repr__(self):
-        return "<User(login='%s', password='%s')>" % (self.login, self.password)
 
 
 @login_manager.user_loader
 def load_user(id):
+    from test_base import Bratuha
     return Bratuha.query.get(int(id))
 
 
@@ -59,7 +27,6 @@ def load_user(id):
 @login_required
 def index():
     return render_template('index.html')
-
 
 
 @app.route('/results', methods=['POST'])
@@ -77,21 +44,16 @@ def show():
     twitter_json = json.dumps(list_tweets)
 
     twitter_list_template = json.loads(twitter_json)
-
     #print(list_tweets)
-
-
     return render_template('results.html', yt_vid = youtube_videos_list, tweets = twitter_list_template)
     #return render_template('results.html', tweets=list_tweets)
-
-
-
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template('register.html')
+    from test_base import Bratuha
     user = Bratuha(request.form['login'], request.form['password'])
     db.session.add(user)
     db.session.commit()
@@ -103,6 +65,7 @@ def register():
 def login():
     if request.method == 'GET':
         return render_template('login.html')
+    from test_base import Bratuha
     login = request.form['login']
     password = request.form['password']
     registered_user = Bratuha.query.filter_by(login=login,password=password).first()
