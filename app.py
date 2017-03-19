@@ -6,11 +6,16 @@ from twitter_search import twitter_search
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testbd.sqlite'
 app.config['SECRET_KEY'] = 'zxczxasdsad'
 #app.config.from_object(os.environ['APP_SETTINGS'])
+
+
 db = SQLAlchemy(app)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -32,7 +37,22 @@ def index():
 @app.route('/results', methods=['POST'])
 @login_required
 def show():
+    from test_base import Queries
+    from test_base import Bratuha
+
     form_query = request.form['title']
+
+    #query1 = Queries(form_query, bratuha='2')
+    #user1 = Bratuha('Kolya4', 'pass1')
+
+    for user in db.session.query(Bratuha).filter(Bratuha.id == '2'):
+        user1 = user.id
+
+    #user1 = db.session.query(Bratuha).filter(Bratuha.id == '2')
+    query1 = Queries(search_query=form_query, bratuha_id = user1)
+    db.session.add(query1)
+    db.session.commit()
+
     youtube_videos = youtube_search(form_query)
 
     youtube_videos_json = json.dumps(youtube_videos)
@@ -47,6 +67,32 @@ def show():
     #print(list_tweets)
     return render_template('results.html', yt_vid = youtube_videos_list, tweets = twitter_list_template)
     #return render_template('results.html', tweets=list_tweets)
+
+
+
+@app.route('/statistics', methods=['GET'])
+@login_required
+def statistics():
+    from test_base import Bratuha
+
+    user_count = db.session.query(Bratuha).count()
+
+    return render_template('statistics.html', users = Bratuha.query.order_by(Bratuha.login).all(), count = user_count)
+
+
+@app.route('/statistics/<id>', methods=['GET'])
+def show_queries(id):
+    from test_base import Bratuha
+    from test_base import Queries
+    query_list = []
+    for instance, br in db.session.query(Queries, Bratuha).filter(Queries.bratuha_id == id).filter(Queries.bratuha_id == Bratuha.id):
+        query_list.append(instance.search_query)
+        # print(instance.id, instance.search_query, instance.bratuha_id, br.login)
+        #print(instance.id, instance.search_query, instance.bratuha_id, br.login)
+
+
+    #return render_template('show_user_queries.html', queries=db.session.query(Queries, Bratuha).filter(Queries.bratuha_id == id).filter(Queries.bratuha_id == Bratuha.id).all())
+    return render_template('show_user_queries.html',queries=query_list)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -86,6 +132,7 @@ def logout():
 @app.before_request
 def before_request():
     g.user = current_user
+
 
 
 

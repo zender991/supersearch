@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h3>List of users</h3>
+
+{% for user in users %}
+    <p class="body"><a href="{{url_for('show_queries', id=user.id)}}"> {{ user.login }} </a></p>
+{% endfor %}
+
+
+<h3>Count of users: <b> {{ count }}  </b> </h3>
+
+
+</body>
+</html>
