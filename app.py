@@ -123,13 +123,24 @@ def statistics():
         if instance not in q_list:
             q_list.append(instance)
 
+    b = []
+    for i in q_list:
+        count_json = {
+            "query": i,
+            "count": qu_list.count(i)
+
+        }
+
+        # a = qu_list.count(i)
+        # b.append(a)
+        b.append(count_json)
 
 
     query_count = db.session.query(Queries).count()
 
     #return jsonify({'queries': list_users})
 
-    return render_template('statistics.html', users = list_users, count = user_count, queries = q_list, q_count = query_count)
+    return render_template('statistics.html', users = list_users, count = user_count, queries = b, q_count = query_count)
 
 
 @app.route('/statistics/<id>', methods=['GET'])
