@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, abort, g
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash, abort, g
 import json
 from flask_sqlalchemy import SQLAlchemy
 from youtube_search import youtube_search
 from twitter_search import twitter_search
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
+from collections import Counter
 
 
 
@@ -34,6 +35,7 @@ def index():
     return render_template('index.html')
 
 
+
 @app.route('/results', methods=['POST'])
 @login_required
 def show():
@@ -45,8 +47,11 @@ def show():
     #query1 = Queries(form_query, bratuha='2')
     #user1 = Bratuha('Kolya4', 'pass1')
 
-    for user in db.session.query(Bratuha).filter(Bratuha.id == '2'):
-        user1 = user.id
+    #for user in db.session.query(Bratuha).filter(Bratuha.id == '2'):
+        #user1 = user.id
+
+    user1 = current_user.get_id()
+
 
     #user1 = db.session.query(Bratuha).filter(Bratuha.id == '2')
     query1 = Queries(search_query=form_query, bratuha_id = user1)
@@ -74,10 +79,57 @@ def show():
 @login_required
 def statistics():
     from test_base import Bratuha
+    from test_base import Queries
 
     user_count = db.session.query(Bratuha).count()
 
-    return render_template('statistics.html', users = Bratuha.query.order_by(Bratuha.login).all(), count = user_count)
+    #users_list = db.session.query(Bratuha).order_by(Bratuha.login).all()
+
+    list_users = []
+    list_queries = []
+    count = 0
+
+    for instance in db.session.query(Bratuha):
+        for br in db.session.query(Queries).filter(instance.id == Queries.bratuha_id):
+            list_queries.append(br.search_query)
+            count = count + 1
+
+        temp_json = {
+            'id': instance.id,
+            'login': instance.login,
+            'password': instance.password,
+            'queryes': list_queries,
+            'count': count
+        }
+
+        list_queries = []
+        count = 0
+
+        list_users.append(temp_json)
+
+
+
+    ########----------QUERIES---------------
+
+    qu_list = []
+
+    for instance in db.session.query(Queries):
+        qu_list.append(instance.search_query)
+
+    print(qu_list)
+
+    q_list = []
+    for instance in qu_list:
+        if instance not in q_list:
+            q_list.append(instance)
+
+
+
+    query_count = db.session.query(Queries).count()
+
+    #return jsonify({'queries': list_users})
+
+    return render_template('statistics.html', users = list_users, count = user_count, queries = q_list, q_count = query_count)
 
 
 @app.route('/statistics/<id>', methods=['GET'])
@@ -132,6 +184,12 @@ def logout():
 @app.before_request
 def before_request():
     g.user = current_user
+
+#----------------------------------
+
+
+
+
 
 
 
