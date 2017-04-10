@@ -4,9 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from youtube_search import youtube_search
 from twitter_search import twitter_search
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from collections import Counter
-
-
 
 
 app = Flask(__name__)
@@ -44,16 +41,8 @@ def show():
 
     form_query = request.form['title']
 
-    #query1 = Queries(form_query, bratuha='2')
-    #user1 = Bratuha('Kolya4', 'pass1')
-
-    #for user in db.session.query(Bratuha).filter(Bratuha.id == '2'):
-        #user1 = user.id
-
     user1 = current_user.get_id()
 
-
-    #user1 = db.session.query(Bratuha).filter(Bratuha.id == '2')
     query1 = Queries(search_query=form_query, bratuha_id = user1)
     db.session.add(query1)
     db.session.commit()
@@ -69,10 +58,8 @@ def show():
     twitter_json = json.dumps(list_tweets)
 
     twitter_list_template = json.loads(twitter_json)
-    #print(list_tweets)
-    return render_template('results.html', yt_vid = youtube_videos_list, tweets = twitter_list_template)
-    #return render_template('results.html', tweets=list_tweets)
 
+    return render_template('results.html', yt_vid = youtube_videos_list, tweets = twitter_list_template)
 
 
 @app.route('/statistics', methods=['GET'])
@@ -81,62 +68,66 @@ def statistics():
     from test_base import Bratuha
     from test_base import Queries
 
-    user_count = db.session.query(Bratuha).count()
+    user = current_user.get_id()
 
-    #users_list = db.session.query(Bratuha).order_by(Bratuha.login).all()
+    for instance in db.session.query(Bratuha).filter(Bratuha.id == user):
+        cur_user = instance.name
 
-    list_users = []
-    list_queries = []
-    count = 0
+    if cur_user != "admin":
 
-    for instance in db.session.query(Bratuha):
-        for br in db.session.query(Queries).filter(instance.id == Queries.bratuha_id):
-            list_queries.append(br.search_query)
-            count = count + 1
+        return 'You have no permission'
+    else:
 
-        temp_json = {
-            'id': instance.id,
-            'login': instance.login,
-            'password': instance.password,
-            'queryes': list_queries,
-            'count': count
-        }
+        user_count = db.session.query(Bratuha).count()
 
+        list_users = []
         list_queries = []
         count = 0
 
-        list_users.append(temp_json)
+        for instance in db.session.query(Bratuha):
+            for br in db.session.query(Queries).filter(instance.id == Queries.bratuha_id):
+                list_queries.append(br.search_query)
+                count = count + 1
 
+            temp_json = {
+                'id': instance.id,
+                'login': instance.login,
+                'password': instance.password,
+                'queryes': list_queries,
+                'count': count
+            }
 
+            list_queries = []
+            count = 0
+
+            list_users.append(temp_json)
 
     ########----------QUERIES---------------
 
-    qu_list = []
+        qu_list = []
 
-    for instance in db.session.query(Queries):
-        qu_list.append(instance.search_query)
+        for instance in db.session.query(Queries):
+            qu_list.append(instance.search_query)
 
-    print(qu_list)
+        print(qu_list)
 
-    q_list = []
-    for instance in qu_list:
-        if instance not in q_list:
-            q_list.append(instance)
+        q_list = []
+        for instance in qu_list:
+            if instance not in q_list:
+                q_list.append(instance)
 
-    b = []
-    for i in q_list:
-        count_json = {
-            "query": i,
-            "count": qu_list.count(i)
+        b = []
+        for i in q_list:
+            count_json = {
+                "query": i,
+                "count": qu_list.count(i)
+            }
 
-        }
+            b.append(count_json)
 
-        b.append(count_json)
+        query_count = db.session.query(Queries).count()
 
-
-    query_count = db.session.query(Queries).count()
-
-    return render_template('statistics.html', users = list_users, count = user_count, queries = b, q_count = query_count)
+        return render_template('statistics.html', users=list_users, count=user_count, queries=b, q_count=query_count)
 
 
 @app.route('/statistics/<id>', methods=['GET'])
@@ -146,11 +137,7 @@ def show_queries(id):
     query_list = []
     for instance, br in db.session.query(Queries, Bratuha).filter(Queries.bratuha_id == id).filter(Queries.bratuha_id == Bratuha.id):
         query_list.append(instance.search_query)
-        # print(instance.id, instance.search_query, instance.bratuha_id, br.login)
-        #print(instance.id, instance.search_query, instance.bratuha_id, br.login)
 
-
-    #return render_template('show_user_queries.html', queries=db.session.query(Queries, Bratuha).filter(Queries.bratuha_id == id).filter(Queries.bratuha_id == Bratuha.id).all())
     return render_template('show_user_queries.html',queries=query_list)
 
 
