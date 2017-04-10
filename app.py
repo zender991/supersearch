@@ -131,14 +131,10 @@ def statistics():
 
         }
 
-        # a = qu_list.count(i)
-        # b.append(a)
         b.append(count_json)
 
 
     query_count = db.session.query(Queries).count()
-
-    #return jsonify({'queries': list_users})
 
     return render_template('statistics.html', users = list_users, count = user_count, queries = b, q_count = query_count)
 
@@ -156,6 +152,27 @@ def show_queries(id):
 
     #return render_template('show_user_queries.html', queries=db.session.query(Queries, Bratuha).filter(Queries.bratuha_id == id).filter(Queries.bratuha_id == Bratuha.id).all())
     return render_template('show_user_queries.html',queries=query_list)
+
+
+@app.route('/query_results', methods=['POST'])
+def show_queries_date():
+    from test_base import Queries
+    from test_base import Bratuha
+    query_list_date = []
+
+    form_query_date_start = request.form['start_date']
+    form_query_date_end = request.form['end_date']
+
+    for instance in db.session.query(Queries).filter(Queries.date > form_query_date_start).filter(Queries.date < form_query_date_end):
+        query_json = {
+            "query": instance.search_query,
+            "date": instance.date
+        }
+
+        query_list_date.append(query_json)
+
+
+    return render_template('show_queries_date.html', queries_date = query_list_date)
 
 
 @app.route('/register', methods=['GET', 'POST'])

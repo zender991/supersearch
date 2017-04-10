@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+{% for query in queries_date %}
+    <p class="body"> {{ query.query }} - {{ query.date }} </p>
+
+{% endfor %}
+
+</body>
+</html>
