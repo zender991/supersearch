@@ -4,14 +4,14 @@ from flask_login import current_user
 from queries import Queries  #need for relationship
 
 
-class Bratuha(db.Model):
-    __tablename__ = 'bratuhas'
+class User(db.Model):
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(50))
     password = db.Column(db.String(50))
-    name = db.Column(db.String(80))
-    search_queries = relationship("Queries", backref="bratuha", lazy='dynamic')
+    user_role = db.Column(db.String(80), server_default='user')
+    search_queries = relationship("Queries", backref="user", lazy='dynamic')
 
     def __init__(self, login, password):
         self.login = login
@@ -36,8 +36,8 @@ class Bratuha(db.Model):
 
 def verify_user_role():
     user_id = current_user.get_id()
-    for instance in db.session.query(Bratuha).filter(Bratuha.id == user_id):
-        logged_in_user = instance.name
+    for instance in db.session.query(User).filter(User.id == user_id):
+        logged_in_user = instance.user_role
 
     return logged_in_user
 
@@ -49,8 +49,8 @@ def user_statistics():
     list_queries = []
     count = 0
 
-    for instance in db.session.query(Bratuha):
-        for query in db.session.query(Queries).filter(instance.id == Queries.bratuha_id):
+    for instance in db.session.query(User):
+        for query in db.session.query(Queries).filter(instance.id == Queries.user_id):
             list_queries.append(query.search_query)
             count = count + 1
 
@@ -71,7 +71,7 @@ def user_statistics():
 
 def calculate_user_count():
 
-    user_count = db.session.query(Bratuha).count()
+    user_count = db.session.query(User).count()
 
     return user_count
 
@@ -79,13 +79,14 @@ def calculate_user_count():
 def show_user_queries(id):
 
     queries_of_user = []
-    for user, query in db.session.query(Queries, Bratuha).filter(Queries.bratuha_id == id).filter(Queries.bratuha_id == Bratuha.id):
+    for user, query in db.session.query(Queries, User).filter(Queries.user_id == id).filter(Queries.user_id == User.id):
         queries_of_user.append(user.search_query)
 
     return queries_of_user
 
 
 def save_user_to_db(new_user):
+
     db.session.add(new_user)
     db.session.commit()
 

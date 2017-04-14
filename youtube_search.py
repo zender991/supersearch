@@ -2,11 +2,12 @@ from apiclient.discovery import build
 from apiclient.errors import HttpError
 from oauth2client.tools import argparser
 import json
-from flask import jsonify
+import config
 
-DEVELOPER_KEY = "AIzaSyCjdP4tZZh3eUc_wgxXX6hjdct-mo0Gp34"
-YOUTUBE_API_SERVICE_NAME = "youtube"
-YOUTUBE_API_VERSION = "v3"
+
+DEVELOPER_KEY = config.DEVELOPER_KEY
+YOUTUBE_API_SERVICE_NAME = config.YOUTUBE_API_SERVICE_NAME
+YOUTUBE_API_VERSION = config.YOUTUBE_API_VERSION
 
 def youtube_search(options):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,developerKey=DEVELOPER_KEY)

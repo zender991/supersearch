@@ -6,20 +6,20 @@ class Queries(db.Model):
     __tablename__ = 'queries'
     id = db.Column(db.Integer, primary_key=True)
     search_query = db.Column(db.String(50))
-    date = db.Column(db.DateTime, server_default=db.func.now())
-    bratuha_id = db.Column(db.Integer, db.ForeignKey('bratuhas.id'))
-    #bratuha = relationship("Bratuha", back_populates="search_queries")
+    date = db.Column(db.DateTime, default=db.func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    #user = relationship("User", back_populates="search_queries")
 
-    def __init__(self, search_query, bratuha_id):
+    def __init__(self, search_query, user_id):
         self.search_query = search_query
-        self.bratuha_id = bratuha_id
+        self.user_id = user_id
 
 
 
 def save_user_query(query_from_form):
 
     user_id = current_user.get_id()
-    user_query = Queries(search_query=query_from_form, bratuha_id=user_id)
+    user_query = Queries(search_query=query_from_form, user_id=user_id)
     db.session.add(user_query)
     db.session.commit()
 
@@ -57,8 +57,8 @@ def calculate_query_count():
 def show_queries_for_date(form_query_date_start, form_query_date_end):
 
     query_list_with_date = []
-    for instance in db.session.query(Queries).filter(Queries.date > form_query_date_start).filter(
-                    Queries.date < form_query_date_end):
+    for instance in db.session.query(Queries).filter(Queries.date >= form_query_date_start).filter(
+                    Queries.date <= form_query_date_end):
 
         query_json = {
             "query": instance.search_query,

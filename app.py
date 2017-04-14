@@ -4,9 +4,8 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testbd.sqlite'
-app.config['SECRET_KEY'] = 'zxczxasdsad'
-#app.config.from_object(os.environ['APP_SETTINGS'])
+
+app.config.from_object('config')
 
 db = SQLAlchemy(app)
 
@@ -17,8 +16,8 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(id):
-    from users import Bratuha
-    return Bratuha.query.get(int(id))
+    from users import User
+    return User.query.get(int(id))
 
 
 @app.route('/', methods=['GET'])
@@ -88,10 +87,12 @@ def show_queries_date():
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    from users import Bratuha, save_user_to_db
-    new_user = Bratuha(request.form['login'], request.form['password'])
+    from users import User, save_user_to_db
+    new_user = User(request.form['login'], request.form['password'])
+
     save_user_to_db(new_user)
     flash('User successfully registered')
+
     return redirect(url_for('login'))
 
 
@@ -99,10 +100,10 @@ def register():
 def login():
     if request.method == 'GET':
         return render_template('login.html')
-    from users import Bratuha
+    from users import User
     login = request.form['login']
     password = request.form['password']
-    registered_user = Bratuha.query.filter_by(login=login,password=password).first()
+    registered_user = User.query.filter_by(login=login,password=password).first()
     if registered_user is None:
         flash('Login or Password is invalid' , 'error')
         return redirect(url_for('login'))
@@ -120,19 +121,18 @@ def logout():
 def before_request():
     g.user = current_user
 
-#----------------------------------REST API
 
 @app.route('/supersearch_rest/api/users', methods=['GET'])
 def users_list():
-    from users import Bratuha
+    from users import User
     from queries import Queries
 
     list_users = []
     list_queries = []
     count = 0
 
-    for instance in db.session.query(Bratuha):
-        for query in db.session.query(Queries).filter(instance.id == Queries.bratuha_id):
+    for instance in db.session.query(User):
+        for query in db.session.query(Queries).filter(instance.id == Queries.user_id):
             list_queries.append(query.search_query)
             count = count + 1
 
@@ -149,9 +149,6 @@ def users_list():
         list_users.append(current_user_json)
 
     return jsonify({'queries': list_users})
-
-
-#######----------------------------
 
 
 if __name__ == '__main__':

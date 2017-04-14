@@ -1,5 +1,6 @@
 from TwitterSearch import *
 import json
+import config
 
 def twitter_search(query):
 
@@ -9,10 +10,10 @@ def twitter_search(query):
     tso.set_include_entities(False)
 
     ts = TwitterSearch(
-        consumer_key='RQfEhM8ZeWjHBwYsR5T8Rkivp',
-        consumer_secret='ib4YMVrccLZCv5vxc3mHumXw102SAcFj7N4N2CWexnbdFv87CJ',
-        access_token='836684282001297408-bk82K2vxYklhsDPiCME22DnfZAcRluL',
-        access_token_secret='gJYRJ68kVGcM9RxR6e9BWou077a7Jk5te3pQ9HxwbBMih'
+        consumer_key=config.CONSUMER_KEY,
+        consumer_secret=config.CONSUMER_SECRET,
+        access_token=config.ACCESS_TOKEN,
+        access_token_secret=config.ACCESS_TOKEN_SECRET
     )
 
     unsorted_tweets = []
