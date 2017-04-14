@@ -4,14 +4,8 @@ import json
 def twitter_search(query):
 
     tso = TwitterSearchOrder() # create a TwitterSearchOrder object
-    #tso.set_keywords(['Guttenberg', 'Doktorarbeit']) # let's define all words we would like to have a look for
-    #tso.set_language('en')
-    #query = "Tony Croos"
     query_list = query.split()
-
     tso.set_keywords(query_list)
-
-
     tso.set_include_entities(False)
 
     ts = TwitterSearch(
@@ -21,33 +15,31 @@ def twitter_search(query):
         access_token_secret='gJYRJ68kVGcM9RxR6e9BWou077a7Jk5te3pQ9HxwbBMih'
     )
 
-    tweets = []
+    unsorted_tweets = []
     tweets_list = []
-    temp_list = []
+    loop_tweets = []
 
     for tweet in ts.search_tweets_iterable(tso):
-        #print('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
+        loop_tweets.append(tweet['user']['screen_name'])
+        loop_tweets.append(tweet['text'])
 
-        #tweets.append('@%s tweeted: %s' % (tweet['user']['screen_name'], tweet['text']))
+        unsorted_tweets.append(loop_tweets)
+        loop_tweets = []
 
-        temp_list.append(tweet['user']['screen_name'])
-        temp_list.append(tweet['text'])
-
-        tweets.append(temp_list)
-
-        temp_list = []
-
-    #print(tweets)
-    for tweet in tweets:
-        temp_tweet = { }
-        temp_tweet['tweeter_user'] = tweet[0]
-        temp_tweet['tweeter_text'] = tweet[1]
-        tweets_list.append(temp_tweet)
-
+    for tweet in unsorted_tweets:
+        loop_tweet_dict = { }
+        loop_tweet_dict['tweeter_user'] = tweet[0]
+        loop_tweet_dict['tweeter_text'] = tweet[1]
+        tweets_list.append(loop_tweet_dict)
 
     return tweets_list
 
 
+def convert_twitter_results(search_query):
 
-#twitter_search("Justin Bieber")
+    list_tweets = twitter_search(search_query)
+    twitter_json = json.dumps(list_tweets)
+    twitter_list_final = json.loads(twitter_json)
+
+    return twitter_list_final
 

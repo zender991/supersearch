@@ -12,7 +12,7 @@
     <p class="body"><a href="{{url_for('show_queries', id=user.id)}}"> {{ user.login }} </a> - {{ user.count }} queries </p>
 {% endfor %}
 
-<h3>Count of users: <b> {{ count }}  </b> </h3>
+<h3>Count of users: <b> {{ users_count }}  </b> </h3>
 
 <h3>List of queries</h3>
 
@@ -20,7 +20,7 @@
 <p> {{ query.query }} - count: {{ query.count }} </p>
 {% endfor %}
 
-<h3>Count of queries: <b> {{ q_count }}  </b> </h3>
+<h3>Count of queries: <b> {{ queries_count }}  </b> </h3>
 
 
  <h3>Select date</h3>
@@ -34,6 +34,8 @@
         <input type="submit" />
     </form>
 
+
+<p>{{ c }}</p>
 
 </body>
 </html>

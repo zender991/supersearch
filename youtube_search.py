@@ -2,12 +2,8 @@ from apiclient.discovery import build
 from apiclient.errors import HttpError
 from oauth2client.tools import argparser
 import json
+from flask import jsonify
 
-
-# Set DEVELOPER_KEY to the API key value from the APIs & auth > Registered apps
-# tab of
-#   https://cloud.google.com/console
-# Please ensure that you have enabled the YouTube Data API for your project.
 DEVELOPER_KEY = "AIzaSyCjdP4tZZh3eUc_wgxXX6hjdct-mo0Gp34"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
@@ -15,8 +11,6 @@ YOUTUBE_API_VERSION = "v3"
 def youtube_search(options):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,developerKey=DEVELOPER_KEY)
 
-  # Call the search.list method to retrieve results matching the specified
-  # query term.
     search_response = youtube.search().list(
       q=options,
       part="id,snippet",
@@ -24,34 +18,33 @@ def youtube_search(options):
       maxResults=10
     ).execute()
 
-#########-----------------------------------------------------
-    videos = []
-    temp_list = []
-    video_list = []
+    unsorted_videos = []
+    loop_video = []
+    video_list_final = []
 
-    # Add each result to the appropriate list, and then display the lists of
-    # matching videos, channels, and playlists.
     for search_result in search_response.get("items", []):
-
       if search_result["id"]["kind"] == "youtube#video":
-        #videos.append("Title: %s , link: https://www.youtube.com/watch?v=%s" % (search_result["snippet"]["title"],search_result["id"]["videoId"]))
-        #temp_list.append((search_result["snippet"]["title"], search_result["id"]["videoId"]))
-        temp_list.append(search_result["snippet"]["title"])
-        temp_list.append(search_result["id"]["videoId"])
+        loop_video.append(search_result["snippet"]["title"])
+        loop_video.append(search_result["id"]["videoId"])
 
-        videos.append(temp_list)
+        unsorted_videos.append(loop_video)
+        loop_video = []
 
-        temp_list = []
-
-
-
-    for video in videos:
+    for video in unsorted_videos:
         temp_video = { }
         temp_video['title'] = video[0]
         temp_video['link'] = video[1]
-        video_list.append(temp_video)
+        video_list_final.append(temp_video)
 
-    return video_list
+    return video_list_final
+
+
+def convert_youtube_results(search_query):
+    youtube_videos = youtube_search(search_query)
+    youtube_videos_json = json.dumps(youtube_videos)
+    youtube_videos_list = json.loads(youtube_videos_json)
+
+    return youtube_videos_list
 
 
 if __name__ == "__main__":
@@ -62,9 +55,4 @@ if __name__ == "__main__":
     try:
         youtube_search(args)
     except HttpError as e:
-        #print "An HTTP error %d occurred:\n%s" % (e.resp.status, e.content)
         print ("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
-
-
-youtube_search("bon jovi")
-
