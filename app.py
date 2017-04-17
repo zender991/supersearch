@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash, abort, g
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, g
+from flask_login import LoginManager, logout_user, current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(id):
-    from users import User
+    from models.users import User
     return User.query.get(int(id))
 
 
@@ -28,7 +28,7 @@ def index():
 @app.route('/results', methods=['POST'])
 @login_required
 def show():
-    from queries import save_user_query
+    from models.queries import save_user_query
     from youtube_search import convert_youtube_results
     from twitter_search import convert_twitter_results
 
@@ -44,8 +44,8 @@ def show():
 @app.route('/statistics', methods=['GET'])
 @login_required
 def statistics():
-    from users import user_statistics, verify_user_role, calculate_user_count
-    from queries import query_statistics, calculate_query_count
+    from models.users import user_statistics, verify_user_role, calculate_user_count
+    from models.queries import query_statistics, calculate_query_count
 
     if verify_user_role() != "admin":
 
@@ -63,7 +63,7 @@ def statistics():
 
 @app.route('/statistics/<id>', methods=['GET'])
 def show_queries(id):
-    from users import show_user_queries
+    from models.users import show_user_queries
 
     queries_of_user = show_user_queries(id)
 
@@ -72,7 +72,7 @@ def show_queries(id):
 
 @app.route('/query_results', methods=['POST'])
 def show_queries_date():
-    from queries import show_queries_for_date
+    from models.queries import show_queries_for_date
 
     form_query_date_start = request.form['start_date']
     form_query_date_end = request.form['end_date']
@@ -86,7 +86,7 @@ def show_queries_date():
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    from users import save_user_to_db, crypt_password
+    from models.users import save_user_to_db, crypt_password
 
     login_from_form = request.form['login']
     password_from_form = request.form['password']
@@ -103,7 +103,7 @@ def register():
 def login():
     if request.method == 'GET':
         return render_template('login.html')
-    from users import verify_user
+    from models.users import verify_user
 
     login = request.form['login']
     password = request.form['password']
@@ -124,8 +124,8 @@ def before_request():
 
 @app.route('/supersearch_rest/api/users', methods=['GET'])
 def users_list():
-    from users import User
-    from queries import Queries
+    from models.users import User
+    from models.queries import Queries
 
     list_users = []
     list_queries = []

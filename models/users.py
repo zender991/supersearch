@@ -1,9 +1,10 @@
-from app import db
-from sqlalchemy.orm import relationship
 from flask import redirect, url_for, flash
-from flask_login import current_user, login_user
 from flask_bcrypt import generate_password_hash, check_password_hash
-from queries import Queries  #need for relationship
+from flask_login import current_user, login_user
+from sqlalchemy.orm import relationship
+
+from app import db
+from models.queries import Queries  #need for relationship
 
 
 class User(db.Model):
@@ -45,7 +46,7 @@ def verify_user_role():
 
 
 def user_statistics():
-    from queries import Queries
+    from models.queries import Queries
 
     user_statistics = []
     list_queries = []
