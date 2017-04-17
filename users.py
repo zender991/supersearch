@@ -109,6 +109,7 @@ def verify_user(login, password):
 
 
 def crypt_password(login_from_form, password_from_form):
+
     pw_hash = generate_password_hash(password_from_form).decode('utf-8')
     new_user = User(login_from_form, pw_hash)
 
