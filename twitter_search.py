@@ -43,4 +43,3 @@ def convert_twitter_results(search_query):
     twitter_list_final = json.loads(twitter_json)
 
     return twitter_list_final
-

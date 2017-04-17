@@ -15,7 +15,6 @@ class Queries(db.Model):
         self.user_id = user_id
 
 
-
 def save_user_query(query_from_form):
 
     user_id = current_user.get_id()

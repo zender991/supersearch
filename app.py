@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 
+
 app = Flask(__name__)
 
 app.config.from_object('config')
@@ -87,8 +88,12 @@ def show_queries_date():
 def register():
     if request.method == 'GET':
         return render_template('register.html')
-    from users import User, save_user_to_db
-    new_user = User(request.form['login'], request.form['password'])
+    from users import save_user_to_db, crypt_password
+
+    login_from_form = request.form['login']
+    password_from_form = request.form['password']
+
+    new_user = crypt_password(login_from_form, password_from_form)
 
     save_user_to_db(new_user)
     flash('User successfully registered')
@@ -100,15 +105,12 @@ def register():
 def login():
     if request.method == 'GET':
         return render_template('login.html')
-    from users import User
+    from users import verify_user
+
     login = request.form['login']
     password = request.form['password']
-    registered_user = User.query.filter_by(login=login,password=password).first()
-    if registered_user is None:
-        flash('Login or Password is invalid' , 'error')
-        return redirect(url_for('login'))
-    login_user(registered_user)
-    flash('Logged in successfully')
+    verify_user(login, password)
+
     return redirect(url_for('index'))
 
 

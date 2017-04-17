@@ -1,6 +1,8 @@
 from app import db
 from sqlalchemy.orm import relationship
-from flask_login import current_user
+from flask import redirect, url_for, flash
+from flask_login import current_user, login_user
+from flask_bcrypt import generate_password_hash, check_password_hash
 from queries import Queries  #need for relationship
 
 
@@ -91,9 +93,23 @@ def save_user_to_db(new_user):
     db.session.commit()
 
 
+def verify_user(login, password):
+
+    search_user_in_db = db.session.query(User.password).filter(User.login == login).first()
+    check_password = check_password_hash(search_user_in_db.password, password)
+
+    if check_password is True:
+        registered_user = User.query.filter_by(login=login).first()
+    else:
+        flash('Login or Password is invalid', 'error')
+        return redirect(url_for('login'))
+
+    login_user(registered_user)
+    flash('Logged in successfully')
 
 
+def crypt_password(login_from_form, password_from_form):
+    pw_hash = generate_password_hash(password_from_form).decode('utf-8')
+    new_user = User(login_from_form, pw_hash)
 
-
-
-
+    return new_user
