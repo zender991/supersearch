@@ -16,7 +16,7 @@ def youtube_search(options):
       q=options,
       part="id,snippet",
       #maxResults=options.max_results
-      maxResults=10
+      maxResults=20
     ).execute()
 
     unsorted_videos = []

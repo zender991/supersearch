@@ -6,6 +6,12 @@
 </head>
 <body>
 
+   {% if g.user.is_authenticated()%}
+   <li><a href="{{ url_for('logout') }}">Logout</a></li>
+   {% endif %}
+   <li><a href="{{ url_for('statistics') }}">Statistics</a></li>
+   <li><a href="{{ url_for('my_account') }}">My account</a></li>
+
 <h3>List of users</h3>
 
 {% for user in users %}

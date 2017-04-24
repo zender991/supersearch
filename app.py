@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, g
 from flask_login import LoginManager, logout_user, current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import generate_password_hash
 
 app = Flask(__name__)
 
@@ -80,6 +81,24 @@ def show_queries_date():
     query_list_with_date = show_queries_for_date(form_query_date_start, form_query_date_end)
 
     return render_template('show_queries_date.html', queries_date = query_list_with_date)
+
+
+@app.route('/my_account', methods=['GET'])
+@login_required
+def my_account():
+    return render_template('my_account.html')
+
+
+
+@app.route('/reset_password', methods=['POST'])
+def reset_password_success():
+    from models.users import reset_pass
+    password_from_form_first = request.form['reset_password_first']
+    password_from_form_second = request.form['reset_password_second']
+
+    reset_pass(password_from_form_first, password_from_form_second)
+
+    return render_template('my_account.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])

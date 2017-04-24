@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reset password</title>
+</head>
+<body>
+<div>
+{% if g.user.is_authenticated()%}
+<li><a href="{{ url_for('logout') }}">Logout</a></li>
+{% endif %}
+<li><a href="{{ url_for('statistics') }}">Statistics</a></li>
+</div>
+<h2>Reset password</h2>
+<form method="post" action="/reset_password">
+<label for="reset_password_first">Enter new password</label>
+<input type="text" name="reset_password_first" id="reset_password_first" /><br><br>
+<label for="reset_password_second">Repeat password</label>
+<input type="text" name="reset_password_second" id="reset_password_second" />
+
+<input type="submit" />
+</form>
+
+</body>
+</html>

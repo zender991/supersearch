@@ -1,4 +1,4 @@
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash,request
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user
 from sqlalchemy.orm import relationship
@@ -99,13 +99,17 @@ def verify_user(login, password):
     search_user_in_db = db.session.query(User.password).filter(User.login == login).first()
     check_password = check_password_hash(search_user_in_db.password, password)
 
+    if 'remember_me' in request.form:
+        remember_me = True
+
+
     if check_password is True:
         registered_user = User.query.filter_by(login=login).first()
     else:
         flash('Login or Password is invalid', 'error')
         return redirect(url_for('login'))
 
-    login_user(registered_user)
+    login_user(registered_user, remember = remember_me)
     flash('Logged in successfully')
 
 
@@ -115,3 +119,16 @@ def crypt_password(login_from_form, password_from_form):
     new_user = User(login_from_form, pw_hash)
 
     return new_user
+
+def reset_pass(password_from_form_first, password_from_form_second):
+    if password_from_form_first == password_from_form_second:
+        user_id = current_user.get_id()
+        pw_hash = generate_password_hash(password_from_form_first).decode('utf-8')
+
+        current_user_from_db = db.session.query(User).filter(User.id == user_id).first()
+        current_user_from_db.password = pw_hash
+        db.session.add(current_user_from_db)
+        db.session.commit()
+
+    else:
+        return "Passwords in the fields are different"
