@@ -86,7 +86,11 @@ def show_queries_date():
 @app.route('/my_account', methods=['GET'])
 @login_required
 def my_account():
-    return render_template('my_account.html')
+    from models.users import show_queries_in_my_account
+
+    queries_of_user = show_queries_in_my_account()
+
+    return render_template('my_account.html', current_user_queries = queries_of_user)
 
 
 

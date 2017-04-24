@@ -99,9 +99,9 @@ def verify_user(login, password):
     search_user_in_db = db.session.query(User.password).filter(User.login == login).first()
     check_password = check_password_hash(search_user_in_db.password, password)
 
+    remember_me = False
     if 'remember_me' in request.form:
         remember_me = True
-
 
     if check_password is True:
         registered_user = User.query.filter_by(login=login).first()
@@ -132,3 +132,13 @@ def reset_pass(password_from_form_first, password_from_form_second):
 
     else:
         return "Passwords in the fields are different"
+
+
+def show_queries_in_my_account():
+    queries_of_user = []
+    current_user_id = current_user.get_id()
+    for user, query in db.session.query(Queries, User).filter(Queries.user_id == current_user_id).filter(
+                    Queries.user_id == User.id):
+        queries_of_user.append(user.search_query)
+
+    return queries_of_user

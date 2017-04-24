@@ -21,5 +21,11 @@
 <input type="submit" />
 </form>
 
+<h2>My queries</h2>
+{% for query in current_user_queries %}
+    <p class="body"> {{ query }} </p>
+
+{% endfor %}
+
 </body>
 </html>
