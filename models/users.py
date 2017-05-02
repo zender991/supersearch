@@ -11,9 +11,9 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(50))
-    password = db.Column(db.String(50))
-    user_role = db.Column(db.String(80), server_default='user')
+    login = db.Column(db.String(150))
+    password = db.Column(db.String(150))
+    user_role = db.Column(db.String(150), server_default='admin')
     search_queries = relationship("Queries", backref="user", lazy='dynamic')
 
     def __init__(self, login, password):
@@ -102,7 +102,7 @@ def verify_user(login, password):
     remember_me = False
     if 'remember_me' in request.form:
         remember_me = True
-
+ 
     if check_password is True:
         registered_user = User.query.filter_by(login=login).first()
     else:

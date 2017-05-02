@@ -1,12 +1,14 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, g
 from flask_login import LoginManager, logout_user, current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
+#from flask.ext.heroku import Heroku
+from flask_heroku import Heroku
 from flask_bcrypt import generate_password_hash
 
 app = Flask(__name__)
 
 app.config.from_object('config')
-
+heroku = Heroku(app)
 db = SQLAlchemy(app)
 
 login_manager = LoginManager()
@@ -48,7 +50,7 @@ def statistics():
     from models.users import user_statistics, verify_user_role, calculate_user_count
     from models.queries import query_statistics, calculate_query_count
 
-    if verify_user_role() != "admin":
+    if verify_user_role() != "user":
 
         return 'You have no permission'
     else:
@@ -143,6 +145,43 @@ def logout():
 @app.before_request
 def before_request():
     g.user = current_user
+
+
+@app.route('/reset', methods=["GET", "POST"])
+def reset():
+    from reset_password_form import EmailForm
+    from models.users import User
+
+    form = EmailForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first_or_404()
+
+        subject = "Password reset requested"
+
+        # Here we use the URLSafeTimedSerializer we created in `util` at the
+        # beginning of the chapter
+        token = ts.dumps(self.email, salt='recover-key')
+
+        recover_url = url_for(
+            'reset_with_token',
+            token=token,
+            _external=True)
+
+        html = render_template(
+            'email/recover.html',
+            recover_url=recover_url)
+
+        # Let's assume that send_email was defined in myapp/util.py
+        send_email(user.email, subject, html)
+
+        return redirect(url_for('index'))
+    return render_template('reset.html', form=form)
+
+
+
+
+
+
 
 
 @app.route('/supersearch_rest/api/users', methods=['GET'])

@@ -5,7 +5,7 @@ class Queries(db.Model):
 
     __tablename__ = 'queries'
     id = db.Column(db.Integer, primary_key=True)
-    search_query = db.Column(db.String(50))
+    search_query = db.Column(db.String(150))
     date = db.Column(db.DateTime, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     #user = relationship("User", back_populates="search_queries")

@@ -1,3 +1,4 @@
 alembic/
 .idea/
 ENV/
+config.py
