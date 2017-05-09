@@ -11,9 +11,9 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    login = db.Column(db.String(150))
+    login = db.Column(db.String(120))
     password = db.Column(db.String(150))
-    user_role = db.Column(db.String(150), server_default='admin')
+    user_role = db.Column(db.String(150), server_default='user')
     search_queries = relationship("Queries", backref="user", lazy='dynamic')
 
     def __init__(self, login, password):
@@ -30,7 +30,6 @@ class User(db.Model):
         return False
 
     def get_id(self):
-        #return unicode(self.id)
         return int(self.id)
 
     def __repr__(self):
