@@ -99,8 +99,9 @@ def reset_password_success():
     from models.users import reset_pass
     password_from_form_first = request.form['reset_password_first']
     password_from_form_second = request.form['reset_password_second']
+    old_password = request.form['old_password']
 
-    reset_pass(password_from_form_first, password_from_form_second)
+    reset_pass(password_from_form_first, password_from_form_second, old_password)
 
     return render_template('my_account.html')
 

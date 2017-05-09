@@ -11,12 +11,20 @@
 {% endif %}
 <li><a href="{{ url_for('statistics') }}">Statistics</a></li>
 </div>
+
+
+{% for message in get_flashed_messages() %}
+{{ message }}
+{% endfor %}
+
 <h2>Reset password</h2>
 <form method="post" action="/reset_password">
 <label for="reset_password_first">Enter new password</label>
 <input type="text" name="reset_password_first" id="reset_password_first" /><br><br>
 <label for="reset_password_second">Repeat password</label>
-<input type="text" name="reset_password_second" id="reset_password_second" />
+<input type="text" name="reset_password_second" id="reset_password_second" /><br><br>
+<label for="old_password">Old password</label>
+<input type="text" name="old_password" id="old_password" />
 
 <input type="submit" />
 </form>

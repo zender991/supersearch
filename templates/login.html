@@ -1,5 +1,9 @@
 {% block body %}
-<a href="{{ url_for('register') }}">Sign UP</a>
+<a href="{{ url_for('register') }}">Sign UP</a></br>
+
+{% for message in get_flashed_messages() %}
+{{ message }}
+{% endfor %}
 
   <form action="" method=post class="form-horizontal">
     <h2>Signin to FlaskLogin(Todo) Application </h2>

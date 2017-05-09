@@ -119,18 +119,29 @@ def crypt_password(login_from_form, password_from_form):
 
     return new_user
 
-def reset_pass(password_from_form_first, password_from_form_second):
-    if password_from_form_first == password_from_form_second:
-        user_id = current_user.get_id()
-        pw_hash = generate_password_hash(password_from_form_first).decode('utf-8')
+def reset_pass(password_from_form_first, password_from_form_second, old_password):
+    user_id = current_user.get_id()
 
-        current_user_from_db = db.session.query(User).filter(User.id == user_id).first()
-        current_user_from_db.password = pw_hash
-        db.session.add(current_user_from_db)
-        db.session.commit()
+    for instance in db.session.query(User).filter(User.id == user_id):
+        hash_password_from_db = instance.password
 
+    check_password = check_password_hash(hash_password_from_db, old_password)
+
+    if check_password is True:
+        if password_from_form_first == password_from_form_second:
+            user_id = current_user.get_id()
+            pw_hash = generate_password_hash(password_from_form_first).decode('utf-8')
+
+            current_user_from_db = db.session.query(User).filter(User.id == user_id).first()
+            current_user_from_db.password = pw_hash
+            db.session.add(current_user_from_db)
+            db.session.commit()
+        else:
+            flash('Passwords in the fields are different')
+            return "Passwords in the fields are different"
     else:
-        return "Passwords in the fields are different"
+        flash('Old password is wrong')
+        return "Old password is wrong"
 
 
 def show_queries_in_my_account():
