@@ -50,7 +50,7 @@ def statistics():
     from models.users import user_statistics, verify_user_role, calculate_user_count
     from models.queries import query_statistics, calculate_query_count
 
-    if verify_user_role() != "user":
+    if verify_user_role() != "admin":
 
         return 'You have no permission'
     else:
