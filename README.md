@@ -6,4 +6,10 @@ Firstly, user should sign in or sign up if he hasn't account. On the main page, 
 
 All the secret data like API keys and credentials to database stores in the config.py file. And all required packages contains requirements.txt file.
 
-Link for demo app - https://supersearch.herokuapp.com/
+#### API calls
+```sh
+/supersearch_rest/api/users
+```
+Method GET, returns json with users list. Each user has his queries and total count of queries. User info contains user id and login.
+
+#### Link for demo app - https://supersearch.herokuapp.com/
