@@ -8,7 +8,6 @@ class Queries(db.Model):
     search_query = db.Column(db.String(150))
     date = db.Column(db.DateTime, default=db.func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    #user = relationship("User", back_populates="search_queries")
 
     def __init__(self, search_query, user_id):
         self.search_query = search_query
@@ -40,7 +39,6 @@ def query_statistics():
             "query": instance,
             "count": query_list.count(instance)
         }
-
         query_with_count.append(query_with_count_json)
 
     return query_with_count
@@ -63,7 +61,6 @@ def show_queries_for_date(form_query_date_start, form_query_date_end):
             "query": instance.search_query,
             "date": instance.date
         }
-
         query_list_with_date.append(query_json)
 
     return query_list_with_date

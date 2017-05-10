@@ -2,7 +2,6 @@ from flask import redirect, url_for, flash,request
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user
 from sqlalchemy.orm import relationship
-
 from app import db
 from models.queries import Queries  #need for relationship
 
@@ -65,7 +64,6 @@ def user_statistics():
 
         list_queries = []
         count = 0
-
         user_statistics.append(current_user_json)
 
     return user_statistics

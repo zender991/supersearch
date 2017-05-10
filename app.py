@@ -49,10 +49,8 @@ def statistics():
     from models.queries import query_statistics, calculate_query_count
 
     if verify_user_role() != "admin":
-
         return 'You have no permission'
     else:
-
         user_count = calculate_user_count()
         users_statistics = user_statistics()
         queries_statistics = query_statistics()
@@ -169,7 +167,6 @@ def users_list():
 
         list_queries = []
         count = 0
-
         list_users.append(current_user_json)
 
     return jsonify({'queries': list_users})

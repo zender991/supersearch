@@ -1,4 +1,9 @@
 {% block body %}
+
+{% for message in get_flashed_messages() %}
+{{ message }}
+{% endfor %}
+
   <form action="" method=post class="form-horizontal">
     <h2>Sign up for FlaskLogin(Todo) Application </h2>
     <div class="control-group">

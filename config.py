@@ -1,11 +1,6 @@
-import os
-
 DEBUG = True
 #SQLALCHEMY_DATABASE_URI = 'sqlite:///testbd.sqlite'
-#SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:pass@localhost:5432/supersearch'
 #SQLALCHEMY_DATABASE_URI = 'postgresql:///supersearch'
-
-#SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 SQLALCHEMY_DATABASE_URI = 'postgres://xocdbhfgtejjre:fb15549de9dee06ff29cfee05d9ff330301abee5419b6def757fd89c5acb165b@ec2-54-83-25-217.compute-1.amazonaws.com:5432/d2a0c0t9j17419'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
