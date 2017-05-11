@@ -3,6 +3,7 @@ from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user
 from sqlalchemy.orm import relationship
 from app import db
+from models.bookmarks import Bookmarks
 from models.queries import Queries  #need for relationship
 
 
@@ -150,3 +151,13 @@ def show_queries_in_my_account():
         queries_of_user.append(user.search_query)
 
     return queries_of_user
+
+
+def show_user_bookmarks():
+    bookmarks_of_user = []
+    current_user_id = current_user.get_id()
+    for user, bm in db.session.query(Bookmarks, User).filter(Bookmarks.user_id_bm == current_user_id).filter(
+                    Bookmarks.user_id_bm == User.id):
+        bookmarks_of_user.append(user.user_bookmark)
+
+    return bookmarks_of_user

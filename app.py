@@ -40,10 +40,8 @@ def show():
     save_user_query(query_from_form)
 
     if query_from_form not in array:
-
         youtube_results = convert_youtube_results(query_from_form)
         twitter_results = convert_twitter_results(query_from_form)
-
         return render_template('results.html', youtuve_videos = youtube_results, tweets = twitter_results)
     else:
         flash('Bad word. Shame on you')
@@ -93,19 +91,12 @@ def show_queries_date():
 @login_required
 def my_account():
     from models.users import show_queries_in_my_account
-    from models.bookmarks import Bookmarks
-    from models.users import User
+    from models.users import show_user_bookmarks
 
     queries_of_user = show_queries_in_my_account()
-
-    bookmarks_of_user = []
-    current_user_id = current_user.get_id()
-    for user, bm in db.session.query(Bookmarks, User).filter(Bookmarks.user_id_bm == current_user_id).filter(
-                    Bookmarks.user_id_bm == User.id):
-        bookmarks_of_user.append(user.user_bookmark)
+    bookmarks_of_user = show_user_bookmarks()
 
     return render_template('my_account.html', current_user_queries = queries_of_user, user_bm = bookmarks_of_user)
-
 
 
 @app.route('/reset_password', methods=['POST'])
