@@ -5,6 +5,8 @@
     <title>Latest Posts</title>
 </head>
 <body>
+
+
 <div>
       {% if g.user.is_authenticated()%}
           <li><a href="{{ url_for('logout') }}">Logout</a></li>
@@ -12,7 +14,12 @@
           <li><a href="{{ url_for('statistics') }}">Statistics</a></li>
           <li><a href="{{ url_for('my_account') }}">My account</a></li>
 </div>
-    <h2>Latets posts</h2>
+    <h2>Enter query</h2>
+
+  {% for message in get_flashed_messages() %}
+  {{ message }}
+  {% endfor %}
+
     <form method="post" action="/results">
             <label for="title">Title</label>
             <input type="text" name="title" id="title" />

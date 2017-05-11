@@ -33,13 +33,21 @@ def show():
     from youtube_search import convert_youtube_results
     from twitter_search import convert_twitter_results
 
+    with open("words.txt") as file:
+        array = [row.strip() for row in file]
+
     query_from_form = request.form['title']
     save_user_query(query_from_form)
 
-    youtube_results = convert_youtube_results(query_from_form)
-    twitter_results = convert_twitter_results(query_from_form)
+    if query_from_form not in array:
 
-    return render_template('results.html', youtuve_videos = youtube_results, tweets = twitter_results)
+        youtube_results = convert_youtube_results(query_from_form)
+        twitter_results = convert_twitter_results(query_from_form)
+
+        return render_template('results.html', youtuve_videos = youtube_results, tweets = twitter_results)
+    else:
+        flash('Bad word. Shame on you')
+        return render_template('index.html')
 
 
 @app.route('/statistics', methods=['GET'])
