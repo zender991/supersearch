@@ -6,6 +6,7 @@
 </head>
 <body>
 <div>
+<li><a href="{{ url_for('index') }}">Main</a></li>
 {% if g.user.is_authenticated()%}
 <li><a href="{{ url_for('logout') }}">Logout</a></li>
 {% endif %}
@@ -34,6 +35,15 @@
     <p class="body"> {{ query }} </p>
 
 {% endfor %}
+
+<h2>My bookmarks</h2>
+
+{% for bookmark in user_bm %}
+<p> https://www.youtube.com/watch?v={{ bookmark }} </p>
+
+{% endfor %}
+
+
 
 </body>
 </html>

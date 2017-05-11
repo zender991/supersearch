@@ -5,7 +5,7 @@
     <title>Title</title>
 </head>
 <body>
-
+    <li><a href="{{ url_for('index') }}">Main</a></li>
    {% if g.user.is_authenticated()%}
    <li><a href="{{ url_for('logout') }}">Logout</a></li>
    {% endif %}

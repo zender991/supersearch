@@ -56,7 +56,7 @@ def statistics():
     from models.users import user_statistics, verify_user_role, calculate_user_count
     from models.queries import query_statistics, calculate_query_count
 
-    if verify_user_role() != "admin":
+    if verify_user_role() != "user":
         return 'You have no permission'
     else:
         user_count = calculate_user_count()
@@ -93,10 +93,18 @@ def show_queries_date():
 @login_required
 def my_account():
     from models.users import show_queries_in_my_account
+    from models.bookmarks import Bookmarks
+    from models.users import User
 
     queries_of_user = show_queries_in_my_account()
 
-    return render_template('my_account.html', current_user_queries = queries_of_user)
+    bookmarks_of_user = []
+    current_user_id = current_user.get_id()
+    for user, bm in db.session.query(Bookmarks, User).filter(Bookmarks.user_id_bm == current_user_id).filter(
+                    Bookmarks.user_id_bm == User.id):
+        bookmarks_of_user.append(user.user_bookmark)
+
+    return render_template('my_account.html', current_user_queries = queries_of_user, user_bm = bookmarks_of_user)
 
 
 
@@ -110,6 +118,18 @@ def reset_password_success():
     reset_pass(password_from_form_first, password_from_form_second, old_password)
 
     return render_template('my_account.html')
+
+
+@app.route('/bookmarks', methods=['POST'])
+def add_bookmark():
+    from models.bookmarks import Bookmarks
+    bookmark_from_form = request.form['bm']
+
+    user_id = current_user.get_id()
+    new_bookmark = Bookmarks(user_bookmark=bookmark_from_form, user_id_bm=user_id)
+    db.session.add(new_bookmark)
+    db.session.commit()
+    return render_template('index.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])

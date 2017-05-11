@@ -7,6 +7,7 @@
 <body>
 
 <div>
+      <li><a href="{{ url_for('index') }}">Main</a></li>
       {% if g.user.is_authenticated()%}
           <li><a href="{{ url_for('logout') }}">Logout</a></li>
       {% endif %}
@@ -20,6 +21,10 @@
     <div class="video">
         <h3> Title - {{ video['title'] }} </h3>
         <h4> Link - https://www.youtube.com/watch?v={{ video['link'] }}</h4>
+        <form method="post" action="/bookmarks">
+            <p><button type="submit" value=" {{ video['link'] }} " name="bm">Add bm </button></p>
+        </form>
+
         <hr>
     </div>
 {% endfor %}
